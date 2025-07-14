@@ -1,0 +1,25 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "source": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "keywords": [
+    "javascript",
+    "node"
+  ],
+  "author": "Bernardo Moya Jimenez",
+  "license": "MIT",
+  "description": "Proyecto Forkify",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.15.4",
+    "parcel": "^2.15.4"
+  },
+  "dependencies": {
+    "fractional": "^1.0.0",
+    "fracty": "^1.0.12"
+  }
+}

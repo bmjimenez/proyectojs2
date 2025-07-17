@@ -1,7 +1,7 @@
 // Archivo helpers.js con funciones auxiliares para la aplicación Forkify
 // Contiene funciones para manejar peticiones a la API y otras utilidades
-// Repositorio:
-// Fecha: 2025-07-06
+// Repositorio: https://github.com/bmjimenez/proyectojs2
+// Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
 
 import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando la URL de la API desde config.js
@@ -16,9 +16,9 @@ export async function getJSON (id)
         const fetchPro = fetch(`${API_URL}${id}`);
         console.log('Petición a la API:', `${API_URL}${id}`);
         const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-        // v.1.b - Declaración de data      
+           
         const data = await res.json();
-        // v.1.c - Validación del estado de res
+        // Validación del estado de res
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data
 
@@ -47,7 +47,6 @@ const timeout = function (s) {
 // Si se proporciona un denominador, se crea una fracción con el numerador y denominador especificados
 // Si no se proporciona un denominador, se calcula la fracción a partir of un número o cadena de texto
 // La clase incluye métodos para convertir la fracción a una cadena de texto y para obtener su valor numérico
-
 export class Fraction_function {
     constructor(numerator, denominator) {
         if (denominator) {

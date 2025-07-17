@@ -1,7 +1,16 @@
-// views/RecipeView.js
+//Proyecto: Forkify
+//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de renderizar recetas
+//Repositorio:https://github.com/bmjimenez/proyectojs2
+//Fecha: 2025-07-16
+
+// Importando iconos SVG y la clase Fraction_function
 import icons from 'url:../../img/icons.svg'; // Usar parcel u otra herramienta para íconos SVG
 import {Fraction_function}  from '..//helpers.js'; // requiere: npm install fracty
 
+// Clase RecipeView que maneja la renderización de recetas
+// Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
+// y manejar eventos relacionados con la receta.
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
@@ -27,7 +36,7 @@ class RecipeView {
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
-renderError(message = this.#errorMessage) {
+  renderError(message = this.#errorMessage) {
     const markup = `
       <div class="error">
         <div>
@@ -48,13 +57,18 @@ renderError(message = this.#errorMessage) {
     );
   }
 
-#clear() {
+  // Método para limpiar el contenido del contenedor de recetas
+  // Este método se utiliza para eliminar el contenido previo antes de renderizar una nueva receta.
+  #clear() {
     this.#parentElement.innerHTML = '';
   }
 
-  // Método para renderizar la receta
-    #generateMarkup() {
-        return `
+  // Método para renderizar la receta en el DOM
+  // Este método genera el HTML necesario para mostrar la receta
+  // y lo inserta en el contenedor de recetas.
+  // Utiliza la función #generateMarkup para crear el HTML de la receta.
+  #generateMarkup() {
+    return `
         <figure class="recipe__fig">
             <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
             <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
@@ -107,10 +121,16 @@ renderError(message = this.#errorMessage) {
         </svg>
             </a>    
         </div>
-        `;  
-    } 
+        `;
+  }
 
-    #generateIngredientMarkup(ing) {
+  // Método privado para generar el HTML de un ingrediente
+  // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
+  // Utiliza la función #formatQuantity para formatear la cantidad del ingrediente.
+  // Este método es llamado dentro de #generateMarkup para generar la lista de ingredientes.
+  // Se utiliza un template literal para crear el HTML de cada ingrediente.
+  // Cada ingrediente se muestra con su cantidad, unidad y descripción.
+  #generateIngredientMarkup(ing) {
     return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
@@ -127,7 +147,9 @@ renderError(message = this.#errorMessage) {
     `;
   }
 
-
+// Método privado para formatear la cantidad de un ingrediente
+// Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
+// Si la cantidad no es un número válido, se devuelve la cantidad original.
 #formatQuantity(qty) {
     try {
       return new Fraction_function(qty).toString();
@@ -137,4 +159,11 @@ renderError(message = this.#errorMessage) {
   }
 }
 
+// Exportar una instancia de RecipeView para ser utilizada en el controlador
+// Esto permite que el controlador pueda acceder a los métodos de la clase RecipeView
+// y renderizar recetas, spinner y errores en el DOM.
+// Se utiliza el patrón Singleton para asegurar que solo haya una instancia de RecipeView.
+// Esto es útil para mantener un único punto de acceso a la vista de recetas en toda la aplicación.
+// Esto evita la creación de múltiples instancias y asegura que los cambios en la vista se reflecten en un solo lugar.
+// Se puede importar esta instancia en el controlador y utilizar sus métodos directamente.
 export default new RecipeView();

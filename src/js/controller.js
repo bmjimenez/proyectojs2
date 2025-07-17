@@ -2,18 +2,18 @@
 //Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
 //Descripción: Este es el controlador principal de la aplicación Forkify, que se encarga de
 // manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
-//Repositorio:
+//Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-06
 
 
+// Importando las dependencias necesarias
 import * as model from './model.js';
-import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando la URL
+import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando las constantes  URL y timeout
+import { Fraction_function } from './helpers.js'; // Importando la clase Fraction_function
 import recipeView from './views/RecipeView.js';
 import  icons  from 'url:../img/icons.svg'; // Importando los iconos SVG
 
 const recipeContainer = document.querySelector('.recipe');
-
-
 
 
 // Función para mostrar la receta

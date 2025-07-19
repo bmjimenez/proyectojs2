@@ -671,11 +671,13 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 //Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
 //Descripción: Este es el controlador principal de la aplicación Forkify, que se encarga de
 // manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
-//Repositorio:
+//Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-06
+// Importando las dependencias necesarias
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _modelJs = require("./model.js");
-var _configJs = require("./config.js"); // Importando la URL
+var _configJs = require("./config.js"); // Importando las constantes  URL y timeout
+var _helpersJs = require("./helpers.js"); // Importando la clase Fraction_function
 var _recipeViewJs = require("./views/RecipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 var _iconsSvg = require("url:../img/icons.svg"); // Importando los iconos SVG
@@ -715,17 +717,21 @@ const init = function() {
 };
 init(); // Inicializar el controlador y cargar la receta al cargar la página
 
-},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3QBkH":[function(require,module,exports,__globalThis) {
+},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P"}],"3QBkH":[function(require,module,exports,__globalThis) {
 // Implementando el modelo MVC para la aplicación Forkify
 // Descripción: Este es el modelo de la aplicación Forkify, que se encarga de
 // manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
-// Repositorio: 
-// Fecha: 2025-07-06
+// Repositorio: https://github.com/bmjimenez/proyectojs2
+// Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// Importando la URL de la API y la función getJSON para realizar peticiones HTTP
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
-//Función asíncrona loadRecipe que recibe id
+//Función asíncrona loadRecipe que recibe id como parámetro
+// Esta función se encarga de cargar una receta específica desde la API
+// y actualizar el objeto state con los datos de la receta.
+// Si ocurre un error, se captura y se muestra en la consola.
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 var _configJs = require("./config.js"); // Importando la URL de la API   
 var _helpersJs = require("./helpers.js");
@@ -750,7 +756,7 @@ async function loadRecipe(id) {
             cookTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
-        // v.1.d.ii - Guardar en state y mostrar en consola
+        //Guardar en en objeto state y mostrar en consola
         state.recipe = recipeObj;
         console.log('Objeto Recipe cargado:', state.recipe);
     } catch (err) {
@@ -762,9 +768,14 @@ async function loadRecipe(id) {
 },{"./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P"}],"2hPh4":[function(require,module,exports,__globalThis) {
 // Archivo de configuración para la aplicación Forkify
 // Contiene constantes y configuraciones globales
-// Repositorio:
-// Fecha: 2025-07-06
+// Repositorio:https://github.com/bmjimenez/proyectojs2
+// Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// Este archivo contiene la URL de la API y el tiempo de espera para las peticiones HTTP
+// Se utiliza para configurar la conexión a la API y manejar errores de tiempo de espera.
+// Estas constantes son importadas en otros módulos para realizar peticiones a la API y manejar la lógica de la aplicación.
+// Se recomienda mantener estas constantes en un archivo separado para facilitar su mantenimiento y reutilización en toda la aplicación.
+// Además, se pueden agregar más configuraciones globales en este archivo según sea necesario en el futuro.
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL);
@@ -805,8 +816,8 @@ exports.export = function(dest, destName, get) {
 },{}],"7nL9P":[function(require,module,exports,__globalThis) {
 // Archivo helpers.js con funciones auxiliares para la aplicación Forkify
 // Contiene funciones para manejar peticiones a la API y otras utilidades
-// Repositorio:
-// Fecha: 2025-07-06
+// Repositorio: https://github.com/bmjimenez/proyectojs2
+// Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -829,9 +840,8 @@ async function getJSON(id) {
             fetchPro,
             timeout((0, _configJs.TIMEOUT_SEC))
         ]);
-        // v.1.b - Declaración de data      
         const data = await res.json();
-        // v.1.c - Validación del estado de res
+        // Validación del estado de res
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data;
     } catch (err) {
@@ -880,12 +890,20 @@ class Fraction_function {
 }
 
 },{"./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"dfIpa":[function(require,module,exports,__globalThis) {
-// views/RecipeView.js
+//Proyecto: Forkify
+//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de renderizar recetas
+//Repositorio:https://github.com/bmjimenez/proyectojs2
+//Fecha: 2025-07-16
+// Importando iconos SVG y la clase Fraction_function
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); // Usar parcel u otra herramienta para íconos SVG
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _helpersJs = require("..//helpers.js"); // requiere: npm install fracty
+// Clase RecipeView que maneja la renderización de recetas
+// Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
+// y manejar eventos relacionados con la receta.
 class RecipeView {
     #parentElement = document.querySelector('.recipe');
     #data;
@@ -928,10 +946,15 @@ class RecipeView {
             'load'
         ].forEach((ev)=>window.addEventListener(ev, handler));
     }
+    // Método para limpiar el contenido del contenedor de recetas
+    // Este método se utiliza para eliminar el contenido previo antes de renderizar una nueva receta.
     #clear() {
         this.#parentElement.innerHTML = '';
     }
-    // Método para renderizar la receta
+    // Método para renderizar la receta en el DOM
+    // Este método genera el HTML necesario para mostrar la receta
+    // y lo inserta en el contenedor de recetas.
+    // Utiliza la función #generateMarkup para crear el HTML de la receta.
     #generateMarkup() {
         return `
         <figure class="recipe__fig">
@@ -988,6 +1011,12 @@ class RecipeView {
         </div>
         `;
     }
+    // Método privado para generar el HTML de un ingrediente
+    // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
+    // Utiliza la función #formatQuantity para formatear la cantidad del ingrediente.
+    // Este método es llamado dentro de #generateMarkup para generar la lista de ingredientes.
+    // Se utiliza un template literal para crear el HTML de cada ingrediente.
+    // Cada ingrediente se muestra con su cantidad, unidad y descripción.
     #generateIngredientMarkup(ing) {
         return `
       <li class="recipe__ingredient">
@@ -1004,6 +1033,9 @@ class RecipeView {
       </li>
     `;
     }
+    // Método privado para formatear la cantidad de un ingrediente
+    // Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
+    // Si la cantidad no es un número válido, se devuelve la cantidad original.
     #formatQuantity(qty) {
         try {
             return new (0, _helpersJs.Fraction_function)(qty).toString();
@@ -1012,6 +1044,13 @@ class RecipeView {
         }
     }
 }
+// Exportar una instancia de RecipeView para ser utilizada en el controlador
+// Esto permite que el controlador pueda acceder a los métodos de la clase RecipeView
+// y renderizar recetas, spinner y errores en el DOM.
+// Se utiliza el patrón Singleton para asegurar que solo haya una instancia de RecipeView.
+// Esto es útil para mantener un único punto de acceso a la vista de recetas en toda la aplicación.
+// Esto evita la creación de múltiples instancias y asegura que los cambios en la vista se reflecten en un solo lugar.
+// Se puede importar esta instancia en el controlador y utilizar sus métodos directamente.
 exports.default = new RecipeView();
 
 },{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","..//helpers.js":"7nL9P"}],"fd0vu":[function(require,module,exports,__globalThis) {

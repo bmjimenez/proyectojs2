@@ -1,7 +1,10 @@
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez 
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el controlador principal de la aplicación Forkify, que se encarga de
-// manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
+//manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
+//Implementando el patrón de diseño MVC (Modelo-Vista-Controlador) para separar la lógica de negocio
+//de la lógica de presentación y facilitar el mantenimiento y la escalabilidad de la aplicación.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-19
 
@@ -21,8 +24,6 @@ import resultsView from './views/resultView.js';
 import paginationView from './views/paginationView.js'
 
 
-
-
 // Seleccionando el elemento del DOM donde se renderizará la receta
 const recipeContainer = document.querySelector('.recipe');
 
@@ -35,27 +36,21 @@ const recipeContainer = document.querySelector('.recipe');
 // La función controlRecipes es asíncrona para manejar operaciones que pueden tardar, como
 // la carga de datos desde una API o base de datos.
 const controlRecipes = async function() {
-  
   try {
     // Obtener el ID de la receta desde el hash de la URL
     const id = window.location.hash.slice(1); 
-   
     // Si no hay ID, salir de la función
     if (!id) {return;} 
-   
     // Renderizar spinner mientras carga la receta
     recipeView.renderSpinner();
-
     // Cargar la receta utilizando el modelo
     await model.loadRecipe(id);
-
     // Renderizar la receta
     recipeView.render(model.state.recipe);
-    
-    recipeView.renderMessage('Receta cargada correctamente!'); // Mensaje de éxito al cargar la receta
-    // Mostrar los datos de la receta en la consola para depuración
+    // Mensaje de éxito al cargar la receta
+    recipeView.renderMessage('Receta cargada correctamente!'); 
+    // temporal Mostrar los datos de la receta en la consola para depuración
     console.log('Receta cargada:', model.state.recipe);
-
   } catch (err) {
     //Se lanza un error si ocurre un problema al cargar la receta
     console.error(`Error al cargar la receta: ${err}`);
@@ -65,7 +60,8 @@ const controlRecipes = async function() {
     recipeView.renderError(err.message);
     throw err; // Lanzar el error para que sea manejado por el controlador
   }
-}
+}// termina función controlRecipes
+
 
 // Definiendo el controlador de búsqueda de resultados
 // Este controlador se encarga de manejar la lógica de búsqueda de recetas, incluyendo la carga y
@@ -93,7 +89,8 @@ const controlSearchResults = async function () {
   } catch (err) {
     console.error('❌ Error en controlSearchResults:', err);
   }
-};
+};// termina función controlSearchResults
+
 
 // Definiendo la funcion de controlador de paginación
 // Este controlador se encarga de manejar la lógica de paginación de los resultados de búsqueda
@@ -116,7 +113,7 @@ const controlPagination = function (goToPage) {
 // searchView y paginationView respectivamente.
 // La función init se llama al final para iniciar el controlador. 
 const init = function() {
-  recipeView.addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
+  recipeView.addHandlerRender(controlRecipes); 
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
   console.log('Controlador inicializado');

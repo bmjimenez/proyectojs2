@@ -1,10 +1,11 @@
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Implementando el modelo MVC para la aplicación Forkify
 // Descripción: Este es el modelo de la aplicación Forkify, que se encarga de
 // manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 // Repositorio: https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
-
+// email: bmjimenez@hotmail.com
 
 // Importando la URL de la API y la función getJSON para realizar peticiones HTTP
 import { API_URL,RES_PER_PAGE } from './config.js'; // Importando la URL de la API   
@@ -21,10 +22,10 @@ import { getJSON } from './helpers.js';
 export const state = {
     recipe: {},
     search: {
-    query: '',
-    results: [],
-    page:1,
-    resultsPerPage:RES_PER_PAGE,
+        query: '',
+        results: [],
+        page: 1,
+        resultsPerPage: RES_PER_PAGE,
     },
 };
 
@@ -35,7 +36,7 @@ export const state = {
 export async function loadRecipe(id) {
     try {
         // Llamada a la función getJSON para obtener los datos de la receta
-        const data = await getJSON(`${API_URL}${id}`); 
+        const data = await getJSON(`${API_URL}${id}`);
         console.log('Datos de la receta:', data);
         // Validar response structure recibida de la API
         // Si la estructura de datos no es válida, se lanza un error
@@ -77,7 +78,7 @@ export async function loadRecipe(id) {
         // Se puede utilizar console.log para mostrar el error en la consola durante el desarrollo.
         console.log(`Error al cargar receta: ${err}`);
     }
-}
+}// termina la función loadRecipe
 
 // Función asíncrona loadSearchResults que recibe query como parámetro
 // Esta función se encarga de cargar los resultados de búsqueda desde la API
@@ -98,7 +99,7 @@ export async function loadSearchResults(query) {
             throw new Error('Estructura de datos inválida');
         }
         // Guardar query en el estado
-         state.search.query = query;
+        state.search.query = query;
         // Transformar los resultados y guardarlos en el objeto state
         // Aquí se mapea el array de recetas recibido de la API y se crea un nuevo
         // array de objetos con las propiedades necesarias para mostrar en la vista.
@@ -121,11 +122,7 @@ export async function loadSearchResults(query) {
         console.log(`${err} 💥💥💥💥`);
         throw err; // Lanzar el error para que sea manejado por el controlador  
     }
-
-
-
-
-}
+}// termina la función loadSearchResults
 
 // Función para obtener una página de resultados de búsqueda
 // Esta función toma un número de página como argumento y devuelve los resultados de búsqueda
@@ -136,11 +133,11 @@ export async function loadSearchResults(query) {
 // Esta función es útil para implementar la paginación de resultados de búsqueda en la aplicación.
 // Permite obtener los resultados de búsqueda de una página específica y facilita la navegación
 // entre páginas de resultados.
-    export const getSearchResultsPage = function (page = state.search.page) {
+export const getSearchResultsPage = function (page = state.search.page) {
     state.search.page = page;
 
     const start = (page - 1) * state.search.resultsPerPage;
     const end = page * state.search.resultsPerPage;
 
     return state.search.results.slice(start, end);
-    };
+};

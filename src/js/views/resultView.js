@@ -1,16 +1,17 @@
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Esta es la vista de resultados de búsqueda de recetas en la aplicación Forkify.
 // Esta vista se encarga de renderizar los resultados de búsqueda obtenidos del modelo,
 // mostrando una lista de recetas que coinciden con la consulta del usuario.
 // Utiliza la clase View para manejar la renderización de los resultados y la clase icons
 // para mostrar iconos SVG en la interfaz de usuario.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
-//Fecha: 2025-07-06
+//Fecha: 2025-07-19
 
-// Importando la clase View y los iconos SVG
+// Importando la clase View 
 import View from './view.js';
-import icons from 'url:../../img/icons.svg';
+//import icons from 'url:../../img/icons.svg';
 
 // ResultsView hereda de la clase View para reutilizar métodos comunes de renderización
 class ResultsView extends View {
@@ -44,7 +45,7 @@ class ResultsView extends View {
         </a>
       </li>`;
   }
-}
+}// termina la clase ResultsView
 
 // Exportando una instancia de ResultsView para que pueda ser utilizada en otras partes de la aplicación
 // Esto permite que la vista de resultados sea reutilizable y se pueda acceder a sus métodos y

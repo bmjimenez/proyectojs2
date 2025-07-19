@@ -1,8 +1,10 @@
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Archivo helpers.js con funciones auxiliares para la aplicación Forkify
 // Contiene funciones para manejar peticiones a la API y otras utilidades
 // Repositorio: https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 
 import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando la URL de la API desde config.js
 
@@ -10,23 +12,23 @@ import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando la URL de la A
 // Funcion para obtener los datos de una receta y hacer una petición a la API
 // Esta función realiza una petición a la API y devuelve los datos de la receta
 
-export async function getJSON (id) 
-{  
+export async function getJSON(id) {
     try {
-       
+
         const fetchPro = fetch(id);
-       //console.log('Petición a la API:', `${API_URL}${id}`);
+        //console.log('Petición a la API:', `${API_URL}${id}`);
         const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-           
+
         const data = await res.json();
         // Validación del estado de res
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data
 
     } catch (err) {
-        throw err; // Lanzar el error para que sea manejado por el controlador;
-    };
-}
+        // Lanzar el error para que sea manejado por el controlador;
+        throw err;
+    }
+}// termina la función getJSON
 
 
 
@@ -86,4 +88,4 @@ export class Fraction_function {
     valueOf() {
         return this.numerator / this.denominator;
     }
-}
+} // termina la clase Fraction_function

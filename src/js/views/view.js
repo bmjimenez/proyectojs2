@@ -1,5 +1,6 @@
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar
 // las vistas de la aplicación, incluyendo la búsqueda de recetas, la paginación
 // y la visualización de recetas.
@@ -7,14 +8,13 @@
 //Fecha: 2025-07-18
 
 
-//Importa iconos y la clase View
+//Importa iconos
 import icons from 'url:../../img/icons.svg'; 
 //import View from './view.js';
 
 // Clase View que maneja la renderización de datos en el DOM
 // Esta clase se encarga de renderizar los datos en el DOM, mostrar errores y spinner
 // y manejar eventos relacionados con la vista.
-// Utiliza iconos SVG para mostrar iconos en la interfaz de usuario.
 // La clase View es una clase base (padre) que puede ser extendida por otras vistas específicas,
 // como RecipeView o SearchView, para reutilizar métodos comunes de renderización y manejo de errores.
 // Esta clase proporciona métodos para renderizar datos, mostrar errores y mensajes,
@@ -101,4 +101,4 @@ export default class View {
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
-}
+}// termina la clase View

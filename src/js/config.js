@@ -1,8 +1,10 @@
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Archivo de configuración para la aplicación Forkify
 // Contiene constantes y configuraciones globales
 // Repositorio:https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 
 // Este archivo contiene la URL de la API y el tiempo de espera para las peticiones HTTP
 // Se utiliza para configurar la conexión a la API y manejar errores de tiempo de espera.

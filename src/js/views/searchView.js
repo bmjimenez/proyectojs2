@@ -1,6 +1,7 @@
 
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez 
+//email: bmjimenez@hotmail.com
 //Descripción: Esta clase genera la Vista de los resultados de busqueda 
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-17
@@ -19,11 +20,13 @@ class SearchView {
     this._clearInput();
     return query;
   }
-// Método para limpiar el campo de entrada de búsqueda
+
+  // Método para limpiar el campo de entrada de búsqueda
   _clearInput() {
-      this._parentEl.querySelector('.search__field').value = '';
+    this._parentEl.querySelector('.search__field').value = '';
   }
-// Método para renderizar un mensaje de error en la vista de búsqueda
+
+  // Método para renderizar un mensaje de error en la vista de búsqueda
   addHandlerSearch(handler) {
     this._parentEl.addEventListener('submit', function (e) {
       e.preventDefault();

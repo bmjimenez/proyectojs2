@@ -1,5 +1,6 @@
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-16
@@ -83,7 +84,9 @@ class RecipeView extends View {
     `;
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
+  }// termina el método renderMessage
+
+
   // Método para añadir un manejador de eventos para renderizar la receta
   // Este método se utiliza para escuchar eventos de cambio en el hash de la URL
   // y cargar la receta correspondiente cuando el hash cambia.
@@ -100,7 +103,7 @@ class RecipeView extends View {
   // especificados, lo que permite que la receta se renderice automáticamente
   // cuando el usuario navega a una receta específica.
   addHandlerRender(handler) {
-    ['hashchange', 'load'].forEach(ev => 
+    ['hashchange', 'load'].forEach(ev =>
       window.addEventListener(ev, handler)
     );
   }
@@ -116,11 +119,11 @@ class RecipeView extends View {
   // y lo inserta en el contenedor de recetas.
   // Utiliza la función _generateMarkup para crear el HTML de la receta.
   _generateMarkup() {
-  if (!this._data.ingredients || !Array.isArray(this._data.ingredients)) {
-    return this.renderError('Ingredientes no disponibles');
-  }
+    if (!this._data.ingredients || !Array.isArray(this._data.ingredients)) {
+      return this.renderError('Ingredientes no disponibles');
+    }
 
-  return `
+    return `
     <figure class="recipe__fig">
         <img src="${this._data.image}" alt="${this._data.title}" class="recipe__img" />
         <h1 class="recipe__title"><span>${this._data.title}</span></h1>
@@ -164,7 +167,7 @@ class RecipeView extends View {
         </a>    
     </div>
   `;
-}
+  }// termina el método _generateMarkup
 
   // Método privado para generar el HTML de un ingrediente
   // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
@@ -189,17 +192,17 @@ class RecipeView extends View {
     `;
   }
 
-// Método privado para formatear la cantidad de un ingrediente
-// Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
-// Si la cantidad no es un número válido, se devuelve la cantidad original.
-_formatQuantity(qty) {
+  // Método privado para formatear la cantidad de un ingrediente
+  // Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
+  // Si la cantidad no es un número válido, se devuelve la cantidad original.
+  _formatQuantity(qty) {
     try {
       return new Fraction_function(qty).toString();
     } catch (e) {
       return qty;
     }
   }
-}
+}// termina la clase RecipeView
 
 // Exportar una instancia de RecipeView para ser utilizada en el controlador
 // Esto permite que el controlador pueda acceder a los métodos de la clase RecipeView

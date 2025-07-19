@@ -13,8 +13,9 @@ import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando la URL de la A
 export async function getJSON (id) 
 {  
     try {
-        const fetchPro = fetch(`${API_URL}${id}`);
-        console.log('Petición a la API:', `${API_URL}${id}`);
+       
+        const fetchPro = fetch(id);
+       //console.log('Petición a la API:', `${API_URL}${id}`);
         const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
            
         const data = await res.json();

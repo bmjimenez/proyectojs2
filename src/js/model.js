@@ -13,6 +13,10 @@ import { getJSON } from './helpers.js';
 //declaracion de objeto state con recipe vacío
 export const state = {
     recipe: {},
+    search: {
+    query: '',
+    results: [],
+},
 };
 
 //Función asíncrona loadRecipe que recibe id como parámetro
@@ -21,7 +25,7 @@ export const state = {
 // Si ocurre un error, se captura y se muestra en la consola.
 export async function loadRecipe(id) {
     try {
-        const data = await getJSON(id); // Llamada a la función getJSON para obtener los datos de la receta
+        const data = await getJSON(`${API_URL}${id}`); // Llamada a la función getJSON para obtener los datos de la receta
         console.log('Datos de la receta:', data);
         // Validar response structure
         if (!data?.data?.recipe) {
@@ -37,7 +41,7 @@ export async function loadRecipe(id) {
             image: recipe.image_url,
             servings: recipe.servings,
             cookTime: recipe.cooking_time,
-            ingredients: recipe.ingredients,
+            ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
         };
 
         //Guardar en en objeto state y mostrar en consola
@@ -47,5 +51,33 @@ export async function loadRecipe(id) {
     } catch (err) {
         // Lanzar el error para que sea manejado por el controlador
         console.log(`Error al cargar receta: ${err}`);
+    }
+}
+
+export async function loadSearchResults(query) {
+    try {
+        const data = await getJSON(`${API_URL}?search=${query}`);
+        console.log('Resultados de la búsqueda:', data);
+
+        // Validar estructura
+        if (!data?.data?.recipes) {
+            throw new Error('Estructura de datos inválida');
+        }
+        // Guardar query en el estado
+         state.search.query = query;
+        // Transformar los resultados y guardarlos en el estado
+        state.search.results = data.data.recipes.map(rec => {
+            return {
+                id: rec.id,
+                title: rec.title,
+                publisher: rec.publisher,
+                image: rec.image_url,
+            };
+        });
+
+        console.log('Resultados de busqueda guardados:', `${state.search.results}`);
+    } catch (err) {
+        console.log(`${err} 💥💥💥💥`);
+        throw err; // Lanzar el error para que sea manejado por el controlador  
     }
 }

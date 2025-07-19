@@ -680,6 +680,8 @@ var _configJs = require("./config.js"); // Importando las constantes  URL y time
 var _helpersJs = require("./helpers.js"); // Importando la clase Fraction_function
 var _recipeViewJs = require("./views/RecipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
+var _searchViewJs = require("./views/searchView.js");
+var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
 var _iconsSvg = require("url:../img/icons.svg"); // Importando los iconos SVG
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 const recipeContainer = document.querySelector('.recipe');
@@ -698,26 +700,30 @@ const controlRecipes = async function() {
         // Renderizar la receta
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
         console.log('Receta cargada:', _modelJs.state.recipe);
-    } catch (error) {
-        console.error('Error al cargar la receta:', error);
+    } catch (err) {
         (0, _recipeViewJsDefault.default).renderError(err.message);
+        throw err; // Lanzar el error para que sea manejado por el controlador
+    }
+};
+const controlSearchResults = async function() {
+    try {
+        const query = (0, _searchViewJsDefault.default).getQuery();
+        if (!query) return;
+        await _modelJs.loadSearchResults(query);
+        console.log(_modelJs.state.search.results); // Muestra los resultados en consola
+    } catch (err) {
+        console.error("\u274C Error en controlSearchResults:", err);
     }
 };
 // Inicializar el controlador y cargar la receta al cargar la página
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
+    (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
     console.log('Controlador inicializado');
-    // Escuchar el evento hashchange para mostrar la receta cuando cambie el hash en la URL
-    [
-        'hashchange',
-        'load'
-    ].forEach((ev)=>{
-        window.addEventListener(ev, controlRecipes);
-    });
 };
 init(); // Inicializar el controlador y cargar la receta al cargar la página
 
-},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P"}],"3QBkH":[function(require,module,exports,__globalThis) {
+},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P","./views/searchView.js":"kbE4Z"}],"3QBkH":[function(require,module,exports,__globalThis) {
 // Implementando el modelo MVC para la aplicación Forkify
 // Descripción: Este es el modelo de la aplicación Forkify, que se encarga de
 // manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
@@ -733,14 +739,19 @@ parcelHelpers.export(exports, "state", ()=>state);
 // y actualizar el objeto state con los datos de la receta.
 // Si ocurre un error, se captura y se muestra en la consola.
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
 var _configJs = require("./config.js"); // Importando la URL de la API   
 var _helpersJs = require("./helpers.js");
 const state = {
-    recipe: {}
+    recipe: {},
+    search: {
+        query: '',
+        results: []
+    }
 };
 async function loadRecipe(id) {
     try {
-        const data = await (0, _helpersJs.getJSON)(id); // Llamada a la función getJSON para obtener los datos de la receta
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`); // Llamada a la función getJSON para obtener los datos de la receta
         console.log('Datos de la receta:', data);
         // Validar response structure
         if (!data?.data?.recipe) throw new Error('Estructura de datos invalida');
@@ -754,7 +765,7 @@ async function loadRecipe(id) {
             image: recipe.image_url,
             servings: recipe.servings,
             cookTime: recipe.cooking_time,
-            ingredients: recipe.ingredients
+            ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : []
         };
         //Guardar en en objeto state y mostrar en consola
         state.recipe = recipeObj;
@@ -762,6 +773,29 @@ async function loadRecipe(id) {
     } catch (err) {
         // Lanzar el error para que sea manejado por el controlador
         console.log(`Error al cargar receta: ${err}`);
+    }
+}
+async function loadSearchResults(query) {
+    try {
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}?search=${query}`);
+        console.log("Resultados de la b\xfasqueda:", data);
+        // Validar estructura
+        if (!data?.data?.recipes) throw new Error("Estructura de datos inv\xe1lida");
+        // Guardar query en el estado
+        state.search.query = query;
+        // Transformar los resultados y guardarlos en el estado
+        state.search.results = data.data.recipes.map((rec)=>{
+            return {
+                id: rec.id,
+                title: rec.title,
+                publisher: rec.publisher,
+                image: rec.image_url
+            };
+        });
+        console.log('Resultados de busqueda guardados:', `${state.search.results}`);
+    } catch (err) {
+        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+        throw err; // Lanzar el error para que sea manejado por el controlador  
     }
 }
 
@@ -834,8 +868,8 @@ parcelHelpers.export(exports, "Fraction_function", ()=>Fraction_function);
 var _configJs = require("./config.js"); // Importando la URL de la API desde config.js
 async function getJSON(id) {
     try {
-        const fetchPro = fetch(`${(0, _configJs.API_URL)}${id}`);
-        console.log("Petici\xf3n a la API:", `${(0, _configJs.API_URL)}${id}`);
+        const fetchPro = fetch(id);
+        //console.log('Petición a la API:', `${API_URL}${id}`);
         const res = await Promise.race([
             fetchPro,
             timeout((0, _configJs.TIMEOUT_SEC))
@@ -908,8 +942,10 @@ class RecipeView {
     #parentElement = document.querySelector('.recipe');
     #data;
     #errorMessage = 'We could not find that recipe. Please try another one!';
+    #message = 'Recipe loaded successfully!';
+    //
     render(data) {
-        if (!data) return this.renderError();
+        if (!data || typeof data !== 'object') return this.renderError();
         this.#data = data;
         const markup = this.#generateMarkup();
         this.#clear();
@@ -927,6 +963,13 @@ class RecipeView {
         this.#parentElement.insertAdjacentHTML('afterbegin', markup);
     }
     renderError(message = this.#errorMessage) {
+        // Este método renderiza un mensaje de error en el DOM
+        // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
+        // Se utiliza un template literal para crear el HTML del mensaje de error.
+        // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
+        // Se utiliza el icono de alerta de triángulo para indicar un error.
+        // El método #clear se utiliza para eliminar el contenido previo antes de renderizar el error
+        // y se inserta el nuevo contenido al principio del contenedor de recetas.
         const markup = `
       <div class="error">
         <div>
@@ -940,6 +983,37 @@ class RecipeView {
         this.#clear();
         this.#parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    renderMessage(message = this.#message) {
+        // Este método renderiza un mensaje de exito en el DOM
+        // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
+        const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+    // Método para añadir un manejador de eventos para renderizar la receta
+    // Este método se utiliza para escuchar eventos de cambio en el hash de la URL
+    // y cargar la receta correspondiente cuando el hash cambia.
+    // Se utiliza para actualizar la vista de la receta cuando el usuario navega a una receta
+    // específica a través de la URL.
+    // Se utiliza un bucle forEach para añadir el manejador de eventos a los eventos
+    // 'hashchange' y 'load', lo que permite que la receta se cargue
+    // tanto al cambiar el hash de la URL como al cargar la página por primera vez.
+    // Esto asegura que la receta se renderice correctamente en ambos casos.
+    // Se utiliza el método addEventListener para añadir el manejador de eventos.
+    // El manejador de eventos se pasa como argumento a este método.
+    // Esto permite que el controlador pueda definir la lógica de renderizado de la receta.
+    // El manejador de eventos se ejecutará cada vez que ocurra uno de los eventos
+    // especificados, lo que permite que la receta se renderice automáticamente
+    // cuando el usuario navega a una receta específica.
     addHandlerRender(handler) {
         [
             'hashchange',
@@ -956,60 +1030,51 @@ class RecipeView {
     // y lo inserta en el contenedor de recetas.
     // Utiliza la función #generateMarkup para crear el HTML de la receta.
     #generateMarkup() {
+        if (!this.#data.ingredients || !Array.isArray(this.#data.ingredients)) return this.renderError('Ingredientes no disponibles');
         return `
-        <figure class="recipe__fig">
-            <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
-            <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
-        </figure>
-    
-        <div class="recipe__details">
-            <div class="recipe__info">
-            <svg class="recipe__info-icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-clock"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
-            <span class="recipe__info-text">minutes</span>
-            </div>
-            <div class="recipe__info">
-            <svg class="recipe__info-icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-users"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
-            <span class="recipe__info-text">servings</span>
-            </div>
-        </div>
-    
-        <div class="recipe__ingredients">
-            <h2 class="heading--2">Recipe ingredients</h2>
-            <ul class="recipe__ingredient-list">
-            ${this.#data.ingredients.map((ing)=>`
-                <li class="recipe__ingredient">
-                <svg class="recipe__icon">
-                    <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
-                </svg>
-                <div class="recipe__quantity">${ing.quantity ? new (0, _helpersJs.Fraction_function)(ing.quantity).toString() : ''}</div>
-                <div class="recipe__description">
-                    <span class="recipe__unit">${ing.unit || ''}</span>
-                    ${ing.description}
-                </div>
-                </li>`).join('')}
-            </ul>
-        </div>
-    
-        <div class="recipe__directions">
-            <h2 class="heading--2">How to cook it</h2>
-            <p class="recipe__directions-text">
-            This recipe was designed by
-            <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
-            </p>
-            <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
-            <span>Directions</span>
-            <svg class="search__icon">
-                <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>   
+    <figure class="recipe__fig">
+        <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
+        <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
+    </figure>
+
+    <div class="recipe__details">
+        <div class="recipe__info">
+        <svg class="recipe__info-icon">
+            <use href="${0, _iconsSvgDefault.default}#icon-clock"></use>
         </svg>
-            </a>    
+        <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
+        <span class="recipe__info-text">minutes</span>
         </div>
-        `;
+        <div class="recipe__info">
+        <svg class="recipe__info-icon">
+            <use href="${0, _iconsSvgDefault.default}#icon-users"></use>
+        </svg>
+        <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+        <span class="recipe__info-text">servings</span>
+        </div>
+    </div>
+
+    <div class="recipe__ingredients">
+        <h2 class="heading--2">Recipe ingredients</h2>
+        <ul class="recipe__ingredient-list">
+        ${this.#data.ingredients.map(this.#generateIngredientMarkup).join('')}
+        </ul>
+    </div>
+
+    <div class="recipe__directions">
+        <h2 class="heading--2">How to cook it</h2>
+        <p class="recipe__directions-text">
+        This recipe was designed by
+        <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
+        </p>
+        <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
+        <span>Directions</span>
+        <svg class="search__icon">
+            <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>   
+        </svg>
+        </a>    
+    </div>
+  `;
     }
     // Método privado para generar el HTML de un ingrediente
     // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
@@ -1024,7 +1089,7 @@ class RecipeView {
           <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
         </svg>
         <div class="recipe__quantity">
-          ${ing.quantity ? this.#formatQuantity(ing.quantity) : ''}
+          ${ing.quantity ? new (0, _helpersJs.Fraction_function)(ing.quantity).toString() : ''}
         </div>
         <div class="recipe__description">
           <span class="recipe__unit">${ing.unit || ''}</span>
@@ -1056,6 +1121,29 @@ exports.default = new RecipeView();
 },{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","..//helpers.js":"7nL9P"}],"fd0vu":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
-},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
+},{}],"kbE4Z":[function(require,module,exports,__globalThis) {
+//
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    #parentEl = document.querySelector('.search');
+    getQuery() {
+        const query = this.#parentEl.querySelector('.search__field').value;
+        this.#clearInput();
+        return query;
+    }
+    #clearInput() {
+        this.#parentEl.querySelector('.search__field').value = '';
+    }
+    addHandlerSearch(handler) {
+        this.#parentEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handler();
+        });
+    }
+} // termina la clase searchView
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=forkify.4a59a05f.js.map

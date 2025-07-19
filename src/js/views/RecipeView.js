@@ -15,9 +15,11 @@ class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
   #errorMessage = 'We could not find that recipe. Please try another one!';
+  #message = 'Recipe loaded successfully!';
 
+  //
   render(data) {
-     if (!data) return this.renderError();
+    if (!data || typeof data !== 'object') return this.renderError();
     this.#data = data;
     const markup = this.#generateMarkup();
     this.#clear();
@@ -37,6 +39,14 @@ class RecipeView {
   }
 
   renderError(message = this.#errorMessage) {
+    // Este método renderiza un mensaje de error en el DOM
+    // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
+    // Se utiliza un template literal para crear el HTML del mensaje de error.
+    // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
+    // Se utiliza el icono de alerta de triángulo para indicar un error.
+    // El método #clear se utiliza para eliminar el contenido previo antes de renderizar el error
+    // y se inserta el nuevo contenido al principio del contenedor de recetas.
+ 
     const markup = `
       <div class="error">
         <div>
@@ -51,6 +61,38 @@ class RecipeView {
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  renderMessage(message = this.#message) {
+    // Este método renderiza un mensaje de exito en el DOM
+    // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
+  
+    const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+  // Método para añadir un manejador de eventos para renderizar la receta
+  // Este método se utiliza para escuchar eventos de cambio en el hash de la URL
+  // y cargar la receta correspondiente cuando el hash cambia.
+  // Se utiliza para actualizar la vista de la receta cuando el usuario navega a una receta
+  // específica a través de la URL.
+  // Se utiliza un bucle forEach para añadir el manejador de eventos a los eventos
+  // 'hashchange' y 'load', lo que permite que la receta se cargue
+  // tanto al cambiar el hash de la URL como al cargar la página por primera vez.
+  // Esto asegura que la receta se renderice correctamente en ambos casos.
+  // Se utiliza el método addEventListener para añadir el manejador de eventos.
+  // El manejador de eventos se pasa como argumento a este método.
+  // Esto permite que el controlador pueda definir la lógica de renderizado de la receta.
+  // El manejador de eventos se ejecutará cada vez que ocurra uno de los eventos
+  // especificados, lo que permite que la receta se renderice automáticamente
+  // cuando el usuario navega a una receta específica.
   addHandlerRender(handler) {
     ['hashchange', 'load'].forEach(ev => 
       window.addEventListener(ev, handler)
@@ -68,61 +110,55 @@ class RecipeView {
   // y lo inserta en el contenedor de recetas.
   // Utiliza la función #generateMarkup para crear el HTML de la receta.
   #generateMarkup() {
-    return `
-        <figure class="recipe__fig">
-            <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
-            <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
-        </figure>
-    
-        <div class="recipe__details">
-            <div class="recipe__info">
-            <svg class="recipe__info-icon">
-                <use href="${icons}#icon-clock"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
-            <span class="recipe__info-text">minutes</span>
-            </div>
-            <div class="recipe__info">
-            <svg class="recipe__info-icon">
-                <use href="${icons}#icon-users"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
-            <span class="recipe__info-text">servings</span>
-            </div>
-        </div>
-    
-        <div class="recipe__ingredients">
-            <h2 class="heading--2">Recipe ingredients</h2>
-            <ul class="recipe__ingredient-list">
-            ${this.#data.ingredients.map(ing => `
-                <li class="recipe__ingredient">
-                <svg class="recipe__icon">
-                    <use href="${icons}#icon-check"></use>
-                </svg>
-                <div class="recipe__quantity">${ing.quantity ? new Fraction_function(ing.quantity).toString() : ''}</div>
-                <div class="recipe__description">
-                    <span class="recipe__unit">${ing.unit || ''}</span>
-                    ${ing.description}
-                </div>
-                </li>`).join('')}
-            </ul>
-        </div>
-    
-        <div class="recipe__directions">
-            <h2 class="heading--2">How to cook it</h2>
-            <p class="recipe__directions-text">
-            This recipe was designed by
-            <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
-            </p>
-            <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
-            <span>Directions</span>
-            <svg class="search__icon">
-                <use href="${icons}#icon-arrow-right"></use>   
-        </svg>
-            </a>    
-        </div>
-        `;
+  if (!this.#data.ingredients || !Array.isArray(this.#data.ingredients)) {
+    return this.renderError('Ingredientes no disponibles');
   }
+
+  return `
+    <figure class="recipe__fig">
+        <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
+        <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
+    </figure>
+
+    <div class="recipe__details">
+        <div class="recipe__info">
+        <svg class="recipe__info-icon">
+            <use href="${icons}#icon-clock"></use>
+        </svg>
+        <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
+        <span class="recipe__info-text">minutes</span>
+        </div>
+        <div class="recipe__info">
+        <svg class="recipe__info-icon">
+            <use href="${icons}#icon-users"></use>
+        </svg>
+        <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+        <span class="recipe__info-text">servings</span>
+        </div>
+    </div>
+
+    <div class="recipe__ingredients">
+        <h2 class="heading--2">Recipe ingredients</h2>
+        <ul class="recipe__ingredient-list">
+        ${this.#data.ingredients.map(this.#generateIngredientMarkup).join('')}
+        </ul>
+    </div>
+
+    <div class="recipe__directions">
+        <h2 class="heading--2">How to cook it</h2>
+        <p class="recipe__directions-text">
+        This recipe was designed by
+        <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
+        </p>
+        <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
+        <span>Directions</span>
+        <svg class="search__icon">
+            <use href="${icons}#icon-arrow-right"></use>   
+        </svg>
+        </a>    
+    </div>
+  `;
+}
 
   // Método privado para generar el HTML de un ingrediente
   // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
@@ -137,7 +173,7 @@ class RecipeView {
           <use href="${icons}#icon-check"></use>
         </svg>
         <div class="recipe__quantity">
-          ${ing.quantity ? this.#formatQuantity(ing.quantity) : ''}
+          ${ing.quantity ? new Fraction_function(ing.quantity).toString() : ''}
         </div>
         <div class="recipe__description">
           <span class="recipe__unit">${ing.unit || ''}</span>

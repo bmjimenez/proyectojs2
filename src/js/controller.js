@@ -11,8 +11,9 @@ import * as model from './model.js';
 import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando las constantes  URL y timeout
 import { Fraction_function } from './helpers.js'; // Importando la clase Fraction_function
 import recipeView from './views/RecipeView.js';
+import searchView from './views/searchView.js';
 import  icons  from 'url:../img/icons.svg'; // Importando los iconos SVG
-
+import { loadSearchResults } from './model.js';
 const recipeContainer = document.querySelector('.recipe');
 
 
@@ -36,20 +37,36 @@ const controlRecipes = async function() {
     recipeView.render(model.state.recipe);
     console.log('Receta cargada:', model.state.recipe);
 
-  } catch (error) {
-    console.error('Error al cargar la receta:', error);
+  } catch (err) {
     recipeView.renderError(err.message);
+    throw err; // Lanzar el error para que sea manejado por el controlador
   }
 }
+
+const controlSearchResults = async function () {
+  try {
+    const query = searchView.getQuery();
+
+    if (!query) return;
+
+    await model.loadSearchResults(query);
+
+    console.log(model.state.search.results); // Muestra los resultados en consola
+  } catch (err) {
+    console.error('❌ Error en controlSearchResults:', err);
+  }
+};
+
+
+
 
 // Inicializar el controlador y cargar la receta al cargar la página
 const init = function() {
   recipeView.addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
+  searchView.addHandlerSearch(controlSearchResults);
   console.log('Controlador inicializado');
-  // Escuchar el evento hashchange para mostrar la receta cuando cambie el hash en la URL
-['hashchange', 'load'].forEach(ev => {
-  window.addEventListener(ev, controlRecipes);
-});
+
 }
 init(); // Inicializar el controlador y cargar la receta al cargar la página
+
 

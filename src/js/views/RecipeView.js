@@ -1,6 +1,6 @@
 //Proyecto: Forkify
 //Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
-//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de renderizar recetas
+//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-16
 
@@ -9,16 +9,21 @@ import icons from 'url:../../img/icons.svg'; // Usar parcel u otra herramienta p
 import {Fraction_function}  from '..//helpers.js'; // requiere: npm install fracty
 import View from './view.js'
 
-// Clase RecipeView que maneja la renderización de recetas
-// Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
+// Clase RecipeView se encarga de renderizar la receta en el DOM, mostrar errores y spinner
 // y manejar eventos relacionados con la receta.
+// RecipeView hereda de la clase View para reutilizar métodos comunes de renderización
+// y manejo de errores.
 class RecipeView extends View {
+  // Seleccionando el elemento del DOM donde se renderizará la receta
   _parentElement = document.querySelector('.recipe');
   _data;
   _errorMessage = 'We could not find that recipe. Please try another one!';
   _message = 'Recipe loaded successfully!';
 
-  //
+  // Método para renderizar la receta en el DOM
+  // Este método genera el HTML necesario para mostrar la receta
+  // y lo inserta en el contenedor de recetas.
+  // Utiliza la función _generateMarkup para crear el HTML de la receta.
   render(data) {
     if (!data || typeof data !== 'object') return this.renderError();
     this._data = data;
@@ -27,6 +32,7 @@ class RecipeView extends View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  // Método para renderizar un spinner mientras se cargan los datos
   renderSpinner() {
     const markup = `
       <div class="spinner">
@@ -39,15 +45,12 @@ class RecipeView extends View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  // Este método renderiza un mensaje de error en el DOM
+  // Se utiliza un template literal para crear el HTML del mensaje de error.
+  // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
+  // y se inserta el nuevo contenido al principio del contenedor de recetas.
   renderError(message = this._errorMessage) {
-    // Este método renderiza un mensaje de error en el DOM
-    // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
-    // Se utiliza un template literal para crear el HTML del mensaje de error.
-    // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
-    // Se utiliza el icono de alerta de triángulo para indicar un error.
-    // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
-    // y se inserta el nuevo contenido al principio del contenedor de recetas.
- 
+    if (!message) message = this._errorMessage;
     const markup = `
       <div class="error">
         <div>
@@ -62,10 +65,12 @@ class RecipeView extends View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  // Este método renderiza un mensaje de exito en el DOM
+  // Se utiliza un template literal para crear el HTML del mensaje de éxito.
+  // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
+  // y se inserta el nuevo contenido al principio del contenedor de recetas.
   renderMessage(message = this._message) {
-    // Este método renderiza un mensaje de exito en el DOM
-    // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
-  
+    if (!message) message = this._message;
     const markup = `
       <div class="error">
         <div>

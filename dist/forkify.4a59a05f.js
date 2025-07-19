@@ -672,12 +672,16 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 //Descripción: Este es el controlador principal de la aplicación Forkify, que se encarga de
 // manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
-//Fecha: 2025-07-06
+//Fecha: 2025-07-19
 // Importando las dependencias necesarias
+// Importando el modelo y las constantes de configuración
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _modelJs = require("./model.js");
 var _configJs = require("./config.js"); // Importando las constantes  URL y timeout
 var _helpersJs = require("./helpers.js"); // Importando la clase Fraction_function
+var _iconsSvg = require("url:../img/icons.svg"); // Importando los iconos SVG
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// Importando las vistas necesarias
 var _recipeViewJs = require("./views/RecipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 var _searchViewJs = require("./views/searchView.js");
@@ -686,54 +690,90 @@ var _resultViewJs = require("./views/resultView.js");
 var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
 var _paginationViewJs = require("./views/paginationView.js");
 var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
-var _iconsSvg = require("url:../img/icons.svg"); // Importando los iconos SVG
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// Seleccionando el elemento del DOM donde se renderizará la receta
 const recipeContainer = document.querySelector('.recipe');
-// Función para mostrar la receta
+// Definiendo el controlador de recetas
+// Este controlador se encarga de manejar la lógica de las recetas, incluyendo la carga y renderizado de las mismas
+// Utiliza la función loadRecipe del modelo para obtener la receta y luego
+// renderiza la receta utilizando la vista recipeView
+// También maneja errores y muestra mensajes de error si ocurre algún problema al cargar la receta
+// La función controlRecipes es asíncrona para manejar operaciones que pueden tardar, como
+// la carga de datos desde una API o base de datos.
 const controlRecipes = async function() {
     try {
         // Obtener el ID de la receta desde el hash de la URL
         const id = window.location.hash.slice(1);
-        console.log('ID de la receta:', id);
         // Si no hay ID, salir de la función
         if (!id) return;
-        // Renderizar spinner
+        // Renderizar spinner mientras carga la receta
         (0, _recipeViewJsDefault.default).renderSpinner();
-        // Cargar la receta
+        // Cargar la receta utilizando el modelo
         await _modelJs.loadRecipe(id);
         // Renderizar la receta
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+        (0, _recipeViewJsDefault.default).renderMessage('Receta cargada correctamente!'); // Mensaje de éxito al cargar la receta
+        // Mostrar los datos de la receta en la consola para depuración
         console.log('Receta cargada:', _modelJs.state.recipe);
     } catch (err) {
+        //Se lanza un error si ocurre un problema al cargar la receta
+        console.error(`Error al cargar la receta: ${err}`);
+        // Renderizar mensaje de error en la vista recipeView
+        // Esto permite mostrar un mensaje de error al usuario en la interfaz de usuario
+        // si ocurre un problema al cargar la receta, como un error de red o un ID
         (0, _recipeViewJsDefault.default).renderError(err.message);
         throw err; // Lanzar el error para que sea manejado por el controlador
     }
 };
+// Definiendo el controlador de búsqueda de resultados
+// Este controlador se encarga de manejar la lógica de búsqueda de recetas, incluyendo la carga y
+// renderizado de los resultados de búsqueda. Utiliza la función loadSearchResults del modelo
+// para obtener los resultados de búsqueda y luego renderiza los resultados utilizando la vista resultsView.
+// También maneja la paginación de los resultados y muestra mensajes de error si ocurre algún problema al cargar los resultados de búsqueda.
+// La función controlSearchResults es asíncrona para manejar operaciones que pueden tardar, como
+// la carga de datos desde una API o base de datos
+// y utiliza la vista searchView para obtener la consulta de búsqueda del usuario.
 const controlSearchResults = async function() {
     try {
         const query = (0, _searchViewJsDefault.default).getQuery();
         if (!query) return;
+        // Renderizar spinner
         (0, _resultViewJsDefault.default).renderSpinner();
+        // Cargar los resultados de búsqueda utilizando el modelo
         await _modelJs.loadSearchResults(query);
+        // Renderizar los resultados de búsqueda
         (0, _resultViewJsDefault.default).render((0, _modelJs.getSearchResultsPage)());
+        // Renderizar la paginación de resultados
         (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
         console.log(_modelJs.state.search.results); // Muestra los resultados en consola
     } catch (err) {
         console.error("\u274C Error en controlSearchResults:", err);
     }
 };
+// Definiendo la funcion de controlador de paginación
+// Este controlador se encarga de manejar la lógica de paginación de los resultados de búsqueda
+// Utiliza la vista paginationView para renderizar los botones de paginación y
+// la función getSearchResultsPage del modelo para obtener los resultados de búsqueda de la página actual
+// La función controlPagination es asíncrona para manejar operaciones que pueden tardar, como
+// la carga de datos desde una API o base de datos.
+// También maneja la lógica de navegación entre páginas de resultados de búsqueda.
 const controlPagination = function(goToPage) {
     (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultsPage(goToPage));
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
-// Inicializar el controlador y cargar la receta al cargar la página
+// Inicializando el controlador
+// Esta función se encarga de inicializar el controlador, añadiendo los manejadores de eventos necesarios
+// para renderizar la receta cuando se carga la página o se cambia el hash de la URL.
+// Utiliza la vista recipeView para añadir el manejador de eventos y renderizar la receta
+// También añade los manejadores de eventos para la búsqueda y paginación utilizando las vistas
+// searchView y paginationView respectivamente.
+// La función init se llama al final para iniciar el controlador. 
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
     (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
     console.log('Controlador inicializado');
 };
-init(); // Inicializar el controlador y cargar la receta al cargar la página
+init(); // Llamada al controlador inicial para iniciar la aplicación
 
 },{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P","./views/searchView.js":"kbE4Z","./views/resultView.js":"2iOri","./views/paginationView.js":"7NIiB"}],"3QBkH":[function(require,module,exports,__globalThis) {
 // Implementando el modelo MVC para la aplicación Forkify
@@ -751,6 +791,10 @@ parcelHelpers.export(exports, "state", ()=>state);
 // y actualizar el objeto state con los datos de la receta.
 // Si ocurre un error, se captura y se muestra en la consola.
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+// Función asíncrona loadSearchResults que recibe query como parámetro
+// Esta función se encarga de cargar los resultados de búsqueda desde la API
+// y actualizar el objeto state con los resultados de búsqueda.
+// Si ocurre un error, se captura y se muestra en la consola.
 parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 var _configJs = require("./config.js"); // Importando la URL de la API   
@@ -766,11 +810,17 @@ const state = {
 };
 async function loadRecipe(id) {
     try {
-        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`); // Llamada a la función getJSON para obtener los datos de la receta
+        // Llamada a la función getJSON para obtener los datos de la receta
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`);
         console.log('Datos de la receta:', data);
-        // Validar response structure
+        // Validar response structure recibida de la API
+        // Si la estructura de datos no es válida, se lanza un error
         if (!data?.data?.recipe) throw new Error('Estructura de datos invalida');
-        //Desestructuración del objeto recipe y guardado en state
+        // Desestructuración del objeto recipe y guardado en state
+        // Aquí se extraen los datos de la receta del objeto data y se crea un nuevo
+        // objeto recipe con las propiedades necesarias.
+        // Se asegura de que la propiedad ingredients sea un array, incluso si no hay ingredientes.
+        // Esto es importante para evitar errores al renderizar la receta en la vista.  
         const { recipe } = data.data;
         const recipeObj = {
             id: recipe.id,
@@ -783,22 +833,36 @@ async function loadRecipe(id) {
             ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : []
         };
         //Guardar en en objeto state y mostrar en consola
+        // Aquí se actualiza el objeto state con la receta cargada,
+        // lo que permite que otras partes de la aplicación accedan a los datos de la receta
         state.recipe = recipeObj;
         console.log('Objeto Recipe cargado:', state.recipe);
     } catch (err) {
         // Lanzar el error para que sea manejado por el controlador
-        console.log(`Error al cargar receta: ${err}`);
+        throw err;
     }
 }
 async function loadSearchResults(query) {
     try {
         const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}?search=${query}`);
         console.log("Resultados de la b\xfasqueda:", data);
-        // Validar estructura
-        if (!data?.data?.recipes) throw new Error("Estructura de datos inv\xe1lida");
+        // Validar estructura de datos recibida de la API
+        // Si la estructura de datos no es válida, se lanza un error
+        // Aquí se verifica que la propiedad recipes exista en el objeto data.data
+        // y que sea un array. Si no es así, se lanza un error.
+        // Esto es importante para asegurarse de que los datos recibidos sean válidos
+        // y se puedan procesar correctamente en la aplicación.
+        if (!data?.data?.recipes || !Array.isArray(data.data.recipes)) throw new Error("Estructura de datos inv\xe1lida");
         // Guardar query en el estado
         state.search.query = query;
-        // Transformar los resultados y guardarlos en el estado
+        // Transformar los resultados y guardarlos en el objeto state
+        // Aquí se mapea el array de recetas recibido de la API y se crea un nuevo
+        // array de objetos con las propiedades necesarias para mostrar en la vista.
+        // Se asegura de que cada objeto tenga las propiedades id, title, publisher e image.
+        // Esto es importante para que la vista pueda renderizar correctamente los resultados de búsqueda.
+        // Se utiliza el método map para transformar los datos y crear un nuevo array de objetos.
+        // Luego, se guarda este array en la propiedad results del objeto state.search.
+        // Esto permite que otras partes de la aplicación accedan a los resultados de búsqueda
         state.search.results = data.data.recipes.map((rec)=>{
             return {
                 id: rec.id,
@@ -949,7 +1013,7 @@ class Fraction_function {
 },{"./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"dfIpa":[function(require,module,exports,__globalThis) {
 //Proyecto: Forkify
 //Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
-//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de renderizar recetas
+//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-16
 // Importando iconos SVG y la clase Fraction_function
@@ -960,15 +1024,20 @@ var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _helpersJs = require("..//helpers.js"); // requiere: npm install fracty
 var _viewJs = require("./view.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-// Clase RecipeView que maneja la renderización de recetas
-// Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
+// Clase RecipeView se encarga de renderizar la receta en el DOM, mostrar errores y spinner
 // y manejar eventos relacionados con la receta.
+// RecipeView hereda de la clase View para reutilizar métodos comunes de renderización
+// y manejo de errores.
 class RecipeView extends (0, _viewJsDefault.default) {
+    // Seleccionando el elemento del DOM donde se renderizará la receta
     _parentElement = document.querySelector('.recipe');
     _data;
     _errorMessage = 'We could not find that recipe. Please try another one!';
     _message = 'Recipe loaded successfully!';
-    //
+    // Método para renderizar la receta en el DOM
+    // Este método genera el HTML necesario para mostrar la receta
+    // y lo inserta en el contenedor de recetas.
+    // Utiliza la función _generateMarkup para crear el HTML de la receta.
     render(data) {
         if (!data || typeof data !== 'object') return this.renderError();
         this._data = data;
@@ -976,6 +1045,7 @@ class RecipeView extends (0, _viewJsDefault.default) {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Método para renderizar un spinner mientras se cargan los datos
     renderSpinner() {
         const markup = `
       <div class="spinner">
@@ -987,14 +1057,12 @@ class RecipeView extends (0, _viewJsDefault.default) {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Este método renderiza un mensaje de error en el DOM
+    // Se utiliza un template literal para crear el HTML del mensaje de error.
+    // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
+    // y se inserta el nuevo contenido al principio del contenedor de recetas.
     renderError(message = this._errorMessage) {
-        // Este método renderiza un mensaje de error en el DOM
-        // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
-        // Se utiliza un template literal para crear el HTML del mensaje de error.
-        // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
-        // Se utiliza el icono de alerta de triángulo para indicar un error.
-        // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
-        // y se inserta el nuevo contenido al principio del contenedor de recetas.
+        if (!message) message = this._errorMessage;
         const markup = `
       <div class="error">
         <div>
@@ -1008,9 +1076,12 @@ class RecipeView extends (0, _viewJsDefault.default) {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Este método renderiza un mensaje de exito en el DOM
+    // Se utiliza un template literal para crear el HTML del mensaje de éxito.
+    // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
+    // y se inserta el nuevo contenido al principio del contenedor de recetas.
     renderMessage(message = this._message) {
-        // Este método renderiza un mensaje de exito en el DOM
-        // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
+        if (!message) message = this._message;
         const markup = `
       <div class="error">
         <div>
@@ -1147,12 +1218,29 @@ exports.default = new RecipeView();
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
 },{}],"2kjY2":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify
+//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar
+// las vistas de la aplicación, incluyendo la búsqueda de recetas, la paginación
+// y la visualización de recetas.
+//Repositorio:https://github.com/bmjimenez/proyectojs2
+//Fecha: 2025-07-18
+//Importa iconos y la clase View
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class View {
     _data;
+    // Método para renderizar los datos en el DOM
+    // Este método toma los datos y genera el HTML correspondiente utilizando el método _generateMarkup.
+    // Luego, limpia el contenido previo del elemento padre y agrega el nuevo HTML al principio.
+    // Si los datos son inválidos o no existen, se renderiza un mensaje de error
+    // utilizando el método renderError.
+    // Si los datos son válidos, se renderiza el HTML generado por _generateMarkup
+    // y se limpia el contenido previo del elemento padre antes de agregar el nuevo HTML.
+    // Este método es utilizado por las vistas para renderizar datos en el DOM y actualizar la
+    // interfaz de usuario con la información más reciente.
     render(data) {
         if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
         this._data = data;
@@ -1160,9 +1248,16 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Método para limpiar el contenido previo del elemento padre
     _clear() {
         this._parentElement.innerHTML = '';
     }
+    // Método para renderizar un spinner mientras se cargan los datos
+    // Este método genera un HTML para un spinner de carga y lo inserta en el elemento
+    // padre antes de renderizar los datos. Se utiliza para indicar al usuario que los datos
+    // están siendo cargados y que debe esperar.
+    // El spinner se muestra mientras se realizan operaciones asíncronas, como la carga de
+    // datos desde una API o base de datos.
     renderSpinner() {
         const markup = `
       <div class="spinner">
@@ -1173,6 +1268,9 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Método para renderizar un mensaje de error
+    // Este método genera un HTML para un mensaje de error y lo inserta en el elemento
+    // padre. 
     renderError(message = this._errorMessage) {
         const markup = `
       <div class="error">
@@ -1186,6 +1284,9 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    // Método para renderizar un mensaje de éxito
+    // Este método genera un HTML para un mensaje de éxito y lo inserta en el elemento
+    // padre. 
     renderMessage(message = this._message) {
         const markup = `
       <div class="message">
@@ -1203,19 +1304,31 @@ class View {
 exports.default = View;
 
 },{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"kbE4Z":[function(require,module,exports,__globalThis) {
-//
+//Proyecto: Forkify
+//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Descripción: Esta clase genera la Vista de los resultados de busqueda 
+//Repositorio:https://github.com/bmjimenez/proyectojs2
+//Fecha: 2025-07-17
+// Esta clase SearchView se encarga de manejar la vista de búsqueda en la aplicación Forkify.
+// Permite obtener la consulta de búsqueda del usuario y manejar el evento de búsqueda.
+// Utiliza el patrón de diseño de vista para separar la lógica de la interfaz de usuario de
+// la lógica de negocio, facilitando el mantenimiento y la escalabilidad de la aplicación.
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class SearchView {
     _parentEl = document.querySelector('.search');
+    // Método para obtener la consulta de búsqueda del usuario
+    // Este método busca el valor del campo de entrada de búsqueda y lo devuelve.
     getQuery() {
         const query = this._parentEl.querySelector('.search__field').value;
         this._clearInput();
         return query;
     }
+    // Método para limpiar el campo de entrada de búsqueda
     _clearInput() {
         this._parentEl.querySelector('.search__field').value = '';
     }
+    // Método para renderizar un mensaje de error en la vista de búsqueda
     addHandlerSearch(handler) {
         this._parentEl.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1223,20 +1336,37 @@ class SearchView {
         });
     }
 } // termina la clase searchView
+// Exportando una instancia de SearchView para que pueda ser utilizada en otras partes de la aplicación
 exports.default = new SearchView();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"2iOri":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify
+//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Descripción: Esta es la vista de resultados de búsqueda de recetas en la aplicación Forkify.
+// Esta vista se encarga de renderizar los resultados de búsqueda obtenidos del modelo,
+// mostrando una lista de recetas que coinciden con la consulta del usuario.
+// Utiliza la clase View para manejar la renderización de los resultados y la clase icons
+// para mostrar iconos SVG en la interfaz de usuario.
+//Repositorio:https://github.com/bmjimenez/proyectojs2
+//Fecha: 2025-07-06
+// Importando la clase View y los iconos SVG
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _viewJs = require("./view.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// ResultsView hereda de la clase View para reutilizar métodos comunes de renderización
 class ResultsView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.results');
     _errorMessage = 'No recipes found for your query. Please try again!';
     _message = '';
+    // Método para renderizar los resultados de búsqueda
+    // Este método toma los datos de resultados de búsqueda y genera el HTML correspondiente
+    // utilizando el método _generateMarkupPreview. Luego, limpia el contenido previo del elemento
+    // padre y agrega el nuevo HTML al principio.
     _generateMarkup() {
+        if (!this._data || this._data.length === 0) return this.renderError(this._errorMessage);
         return this._data.map(this._generateMarkupPreview).join('');
     }
     _generateMarkupPreview(result) {
@@ -1255,6 +1385,16 @@ class ResultsView extends (0, _viewJsDefault.default) {
       </li>`;
     }
 }
+// Exportando una instancia de ResultsView para que pueda ser utilizada en otras partes de la aplicación
+// Esto permite que la vista de resultados sea reutilizable y se pueda acceder a sus métodos y
+// propiedades desde otras partes del código, como el controlador principal de la aplicación.
+// Al exportar una instancia, se asegura que siempre se utilice la misma instancia de ResultsView
+// en toda la aplicación, lo que facilita el manejo del estado y la renderización de resultados.
+// Esto es útil para mantener la consistencia en la interfaz de usuario y evitar problemas de
+// duplicación de vistas o resultados.
+// Además, al exportar una instancia, se puede acceder a los métodos de la clase ResultsView
+// directamente desde el controlador, lo que simplifica la lógica de renderización de resultados
+// y mejora la legibilidad del código.
 exports.default = new ResultsView();
 
 },{"./view.js":"2kjY2","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7NIiB":[function(require,module,exports,__globalThis) {

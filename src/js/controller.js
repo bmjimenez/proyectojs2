@@ -13,8 +13,12 @@ import { Fraction_function } from './helpers.js'; // Importando la clase Fractio
 import recipeView from './views/RecipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultView.js';
+import paginationView from './views/paginationView.js'
 import  icons  from 'url:../img/icons.svg'; // Importando los iconos SVG
-import { loadSearchResults } from './model.js';
+import { loadSearchResults,getSearchResultsPage}  from './model.js';
+
+
+
 const recipeContainer = document.querySelector('.recipe');
 
 
@@ -52,7 +56,9 @@ const controlSearchResults = async function () {
     resultsView.renderSpinner();
     await model.loadSearchResults(query);
 
-    resultsView.render(model.state.search.results);
+    resultsView.render(getSearchResultsPage());
+
+    paginationView.render(model.state.search);
 
     console.log(model.state.search.results); // Muestra los resultados en consola
   } catch (err) {
@@ -60,13 +66,17 @@ const controlSearchResults = async function () {
   }
 };
 
-
+const controlPagination = function (goToPage) {
+  resultsView.render(model.getSearchResultsPage(goToPage));
+  paginationView.render(model.state.search);
+};
 
 
 // Inicializar el controlador y cargar la receta al cargar la página
 const init = function() {
   recipeView.addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
   console.log('Controlador inicializado');
 
 }

@@ -11,3 +11,4 @@
 // Además, se pueden agregar más configuraciones globales en este archivo según sea necesario en el futuro.
 export const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 export const TIMEOUT_SEC = 5; // Timeout para las peticiones
+export const RES_PER_PAGE = 10; // paginas de hasta 10 resultados 

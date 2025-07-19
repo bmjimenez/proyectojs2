@@ -12,6 +12,7 @@ import { API_URL, TIMEOUT_SEC } from './config.js'; // Importando las constantes
 import { Fraction_function } from './helpers.js'; // Importando la clase Fraction_function
 import recipeView from './views/RecipeView.js';
 import searchView from './views/searchView.js';
+import resultsView from './views/resultView.js';
 import  icons  from 'url:../img/icons.svg'; // Importando los iconos SVG
 import { loadSearchResults } from './model.js';
 const recipeContainer = document.querySelector('.recipe');
@@ -48,8 +49,10 @@ const controlSearchResults = async function () {
     const query = searchView.getQuery();
 
     if (!query) return;
-
+    resultsView.renderSpinner();
     await model.loadSearchResults(query);
+
+    resultsView.render(model.state.search.results);
 
     console.log(model.state.search.results); // Muestra los resultados en consola
   } catch (err) {

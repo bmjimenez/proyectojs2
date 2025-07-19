@@ -7,23 +7,24 @@
 // Importando iconos SVG y la clase Fraction_function
 import icons from 'url:../../img/icons.svg'; // Usar parcel u otra herramienta para íconos SVG
 import {Fraction_function}  from '..//helpers.js'; // requiere: npm install fracty
+import View from './view.js'
 
 // Clase RecipeView que maneja la renderización de recetas
 // Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
 // y manejar eventos relacionados con la receta.
-class RecipeView {
-  #parentElement = document.querySelector('.recipe');
-  #data;
-  #errorMessage = 'We could not find that recipe. Please try another one!';
-  #message = 'Recipe loaded successfully!';
+class RecipeView extends View {
+  _parentElement = document.querySelector('.recipe');
+  _data;
+  _errorMessage = 'We could not find that recipe. Please try another one!';
+  _message = 'Recipe loaded successfully!';
 
   //
   render(data) {
     if (!data || typeof data !== 'object') return this.renderError();
-    this.#data = data;
-    const markup = this.#generateMarkup();
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+    this._data = data;
+    const markup = this._generateMarkup();
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
   renderSpinner() {
@@ -34,17 +35,17 @@ class RecipeView {
         </svg>
       </div>
     `;
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
-  renderError(message = this.#errorMessage) {
+  renderError(message = this._errorMessage) {
     // Este método renderiza un mensaje de error en el DOM
     // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
     // Se utiliza un template literal para crear el HTML del mensaje de error.
     // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
     // Se utiliza el icono de alerta de triángulo para indicar un error.
-    // El método #clear se utiliza para eliminar el contenido previo antes de renderizar el error
+    // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
     // y se inserta el nuevo contenido al principio del contenedor de recetas.
  
     const markup = `
@@ -57,11 +58,11 @@ class RecipeView {
         <p>${message}</p>
       </div>
     `;
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
-  renderMessage(message = this.#message) {
+  renderMessage(message = this._message) {
     // Este método renderiza un mensaje de exito en el DOM
     // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
   
@@ -75,8 +76,8 @@ class RecipeView {
         <p>${message}</p>
       </div>
     `;
-    this.#clear();
-    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+    this._clear();
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
   // Método para añadir un manejador de eventos para renderizar la receta
   // Este método se utiliza para escuchar eventos de cambio en el hash de la URL
@@ -101,23 +102,23 @@ class RecipeView {
 
   // Método para limpiar el contenido del contenedor de recetas
   // Este método se utiliza para eliminar el contenido previo antes de renderizar una nueva receta.
-  #clear() {
-    this.#parentElement.innerHTML = '';
+  _clear() {
+    this._parentElement.innerHTML = '';
   }
 
   // Método para renderizar la receta en el DOM
   // Este método genera el HTML necesario para mostrar la receta
   // y lo inserta en el contenedor de recetas.
-  // Utiliza la función #generateMarkup para crear el HTML de la receta.
-  #generateMarkup() {
-  if (!this.#data.ingredients || !Array.isArray(this.#data.ingredients)) {
+  // Utiliza la función _generateMarkup para crear el HTML de la receta.
+  _generateMarkup() {
+  if (!this._data.ingredients || !Array.isArray(this._data.ingredients)) {
     return this.renderError('Ingredientes no disponibles');
   }
 
   return `
     <figure class="recipe__fig">
-        <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
-        <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
+        <img src="${this._data.image}" alt="${this._data.title}" class="recipe__img" />
+        <h1 class="recipe__title"><span>${this._data.title}</span></h1>
     </figure>
 
     <div class="recipe__details">
@@ -125,14 +126,14 @@ class RecipeView {
         <svg class="recipe__info-icon">
             <use href="${icons}#icon-clock"></use>
         </svg>
-        <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
+        <span class="recipe__info-data recipe__info-data--minutes">${this._data.cookTime}</span>
         <span class="recipe__info-text">minutes</span>
         </div>
         <div class="recipe__info">
         <svg class="recipe__info-icon">
             <use href="${icons}#icon-users"></use>
         </svg>
-        <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+        <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
         <span class="recipe__info-text">servings</span>
         </div>
     </div>
@@ -140,7 +141,7 @@ class RecipeView {
     <div class="recipe__ingredients">
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
-        ${this.#data.ingredients.map(this.#generateIngredientMarkup).join('')}
+        ${this._data.ingredients.map(this._generateIngredientMarkup).join('')}
         </ul>
     </div>
 
@@ -148,9 +149,9 @@ class RecipeView {
         <h2 class="heading--2">How to cook it</h2>
         <p class="recipe__directions-text">
         This recipe was designed by
-        <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
+        <span class="recipe__publisher">${this._data.publisher}</span>. Check it out!
         </p>
-        <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
+        <a class="btn--small recipe__btn" href="${this._data.sourceUrl}" target="_blank">
         <span>Directions</span>
         <svg class="search__icon">
             <use href="${icons}#icon-arrow-right"></use>   
@@ -162,11 +163,11 @@ class RecipeView {
 
   // Método privado para generar el HTML de un ingrediente
   // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
-  // Utiliza la función #formatQuantity para formatear la cantidad del ingrediente.
-  // Este método es llamado dentro de #generateMarkup para generar la lista de ingredientes.
+  // Utiliza la función _formatQuantity para formatear la cantidad del ingrediente.
+  // Este método es llamado dentro de _generateMarkup para generar la lista de ingredientes.
   // Se utiliza un template literal para crear el HTML de cada ingrediente.
   // Cada ingrediente se muestra con su cantidad, unidad y descripción.
-  #generateIngredientMarkup(ing) {
+  _generateIngredientMarkup(ing) {
     return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
@@ -186,7 +187,7 @@ class RecipeView {
 // Método privado para formatear la cantidad de un ingrediente
 // Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
 // Si la cantidad no es un número válido, se devuelve la cantidad original.
-#formatQuantity(qty) {
+_formatQuantity(qty) {
     try {
       return new Fraction_function(qty).toString();
     } catch (e) {

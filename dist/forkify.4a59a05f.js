@@ -682,6 +682,8 @@ var _recipeViewJs = require("./views/RecipeView.js");
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 var _searchViewJs = require("./views/searchView.js");
 var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
+var _resultViewJs = require("./views/resultView.js");
+var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
 var _iconsSvg = require("url:../img/icons.svg"); // Importando los iconos SVG
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 const recipeContainer = document.querySelector('.recipe');
@@ -709,7 +711,9 @@ const controlSearchResults = async function() {
     try {
         const query = (0, _searchViewJsDefault.default).getQuery();
         if (!query) return;
+        (0, _resultViewJsDefault.default).renderSpinner();
         await _modelJs.loadSearchResults(query);
+        (0, _resultViewJsDefault.default).render(_modelJs.state.search.results);
         console.log(_modelJs.state.search.results); // Muestra los resultados en consola
     } catch (err) {
         console.error("\u274C Error en controlSearchResults:", err);
@@ -723,7 +727,7 @@ const init = function() {
 };
 init(); // Inicializar el controlador y cargar la receta al cargar la página
 
-},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P","./views/searchView.js":"kbE4Z"}],"3QBkH":[function(require,module,exports,__globalThis) {
+},{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P","./views/searchView.js":"kbE4Z","./views/resultView.js":"2iOri"}],"3QBkH":[function(require,module,exports,__globalThis) {
 // Implementando el modelo MVC para la aplicación Forkify
 // Descripción: Este es el modelo de la aplicación Forkify, que se encarga de
 // manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
@@ -935,21 +939,23 @@ parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); // Usar parcel u otra herramienta para íconos SVG
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _helpersJs = require("..//helpers.js"); // requiere: npm install fracty
+var _viewJs = require("./view.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 // Clase RecipeView que maneja la renderización de recetas
 // Esta clase se encarga de renderizar la receta en el DOM, mostrar errores y spinner
 // y manejar eventos relacionados con la receta.
-class RecipeView {
-    #parentElement = document.querySelector('.recipe');
-    #data;
-    #errorMessage = 'We could not find that recipe. Please try another one!';
-    #message = 'Recipe loaded successfully!';
+class RecipeView extends (0, _viewJsDefault.default) {
+    _parentElement = document.querySelector('.recipe');
+    _data;
+    _errorMessage = 'We could not find that recipe. Please try another one!';
+    _message = 'Recipe loaded successfully!';
     //
     render(data) {
         if (!data || typeof data !== 'object') return this.renderError();
-        this.#data = data;
-        const markup = this.#generateMarkup();
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+        this._data = data;
+        const markup = this._generateMarkup();
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
     renderSpinner() {
         const markup = `
@@ -959,16 +965,16 @@ class RecipeView {
         </svg>
       </div>
     `;
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
-    renderError(message = this.#errorMessage) {
+    renderError(message = this._errorMessage) {
         // Este método renderiza un mensaje de error en el DOM
         // Si no se proporciona un mensaje, se utiliza el mensaje de error predeterminado.
         // Se utiliza un template literal para crear el HTML del mensaje de error.
         // El mensaje de error se muestra dentro de un contenedor con la clase 'error'.
         // Se utiliza el icono de alerta de triángulo para indicar un error.
-        // El método #clear se utiliza para eliminar el contenido previo antes de renderizar el error
+        // El método _clear se utiliza para eliminar el contenido previo antes de renderizar el error
         // y se inserta el nuevo contenido al principio del contenedor de recetas.
         const markup = `
       <div class="error">
@@ -980,10 +986,10 @@ class RecipeView {
         <p>${message}</p>
       </div>
     `;
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
-    renderMessage(message = this.#message) {
+    renderMessage(message = this._message) {
         // Este método renderiza un mensaje de exito en el DOM
         // Si no se proporciona un mensaje, se utiliza el mensaje de éxito predeterminado.
         const markup = `
@@ -996,8 +1002,8 @@ class RecipeView {
         <p>${message}</p>
       </div>
     `;
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
     // Método para añadir un manejador de eventos para renderizar la receta
     // Este método se utiliza para escuchar eventos de cambio en el hash de la URL
@@ -1022,19 +1028,19 @@ class RecipeView {
     }
     // Método para limpiar el contenido del contenedor de recetas
     // Este método se utiliza para eliminar el contenido previo antes de renderizar una nueva receta.
-    #clear() {
-        this.#parentElement.innerHTML = '';
+    _clear() {
+        this._parentElement.innerHTML = '';
     }
     // Método para renderizar la receta en el DOM
     // Este método genera el HTML necesario para mostrar la receta
     // y lo inserta en el contenedor de recetas.
-    // Utiliza la función #generateMarkup para crear el HTML de la receta.
-    #generateMarkup() {
-        if (!this.#data.ingredients || !Array.isArray(this.#data.ingredients)) return this.renderError('Ingredientes no disponibles');
+    // Utiliza la función _generateMarkup para crear el HTML de la receta.
+    _generateMarkup() {
+        if (!this._data.ingredients || !Array.isArray(this._data.ingredients)) return this.renderError('Ingredientes no disponibles');
         return `
     <figure class="recipe__fig">
-        <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
-        <h1 class="recipe__title"><span>${this.#data.title}</span></h1>
+        <img src="${this._data.image}" alt="${this._data.title}" class="recipe__img" />
+        <h1 class="recipe__title"><span>${this._data.title}</span></h1>
     </figure>
 
     <div class="recipe__details">
@@ -1042,14 +1048,14 @@ class RecipeView {
         <svg class="recipe__info-icon">
             <use href="${0, _iconsSvgDefault.default}#icon-clock"></use>
         </svg>
-        <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
+        <span class="recipe__info-data recipe__info-data--minutes">${this._data.cookTime}</span>
         <span class="recipe__info-text">minutes</span>
         </div>
         <div class="recipe__info">
         <svg class="recipe__info-icon">
             <use href="${0, _iconsSvgDefault.default}#icon-users"></use>
         </svg>
-        <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+        <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
         <span class="recipe__info-text">servings</span>
         </div>
     </div>
@@ -1057,7 +1063,7 @@ class RecipeView {
     <div class="recipe__ingredients">
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
-        ${this.#data.ingredients.map(this.#generateIngredientMarkup).join('')}
+        ${this._data.ingredients.map(this._generateIngredientMarkup).join('')}
         </ul>
     </div>
 
@@ -1065,9 +1071,9 @@ class RecipeView {
         <h2 class="heading--2">How to cook it</h2>
         <p class="recipe__directions-text">
         This recipe was designed by
-        <span class="recipe__publisher">${this.#data.publisher}</span>. Check it out!
+        <span class="recipe__publisher">${this._data.publisher}</span>. Check it out!
         </p>
-        <a class="btn--small recipe__btn" href="${this.#data.sourceUrl}" target="_blank">
+        <a class="btn--small recipe__btn" href="${this._data.sourceUrl}" target="_blank">
         <span>Directions</span>
         <svg class="search__icon">
             <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>   
@@ -1078,11 +1084,11 @@ class RecipeView {
     }
     // Método privado para generar el HTML de un ingrediente
     // Este método se utiliza para crear el HTML de cada ingrediente de la receta.
-    // Utiliza la función #formatQuantity para formatear la cantidad del ingrediente.
-    // Este método es llamado dentro de #generateMarkup para generar la lista de ingredientes.
+    // Utiliza la función _formatQuantity para formatear la cantidad del ingrediente.
+    // Este método es llamado dentro de _generateMarkup para generar la lista de ingredientes.
     // Se utiliza un template literal para crear el HTML de cada ingrediente.
     // Cada ingrediente se muestra con su cantidad, unidad y descripción.
-    #generateIngredientMarkup(ing) {
+    _generateIngredientMarkup(ing) {
         return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">
@@ -1101,7 +1107,7 @@ class RecipeView {
     // Método privado para formatear la cantidad de un ingrediente
     // Este método utiliza la clase Fraction_function para convertir la cantidad a una fracción
     // Si la cantidad no es un número válido, se devuelve la cantidad original.
-    #formatQuantity(qty) {
+    _formatQuantity(qty) {
         try {
             return new (0, _helpersJs.Fraction_function)(qty).toString();
         } catch (e) {
@@ -1118,25 +1124,81 @@ class RecipeView {
 // Se puede importar esta instancia en el controlador y utilizar sus métodos directamente.
 exports.default = new RecipeView();
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","..//helpers.js":"7nL9P"}],"fd0vu":[function(require,module,exports,__globalThis) {
+},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","..//helpers.js":"7nL9P","./view.js":"2kjY2"}],"fd0vu":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
-},{}],"kbE4Z":[function(require,module,exports,__globalThis) {
+},{}],"2kjY2":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class View {
+    _data;
+    render(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        this._data = data;
+        const markup = this._generateMarkup();
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+    _clear() {
+        this._parentElement.innerHTML = '';
+    }
+    renderSpinner() {
+        const markup = `
+      <div class="spinner">
+        <svg>
+          <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
+        </svg>
+      </div>`;
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+    renderError(message = this._errorMessage) {
+        const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>`;
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+    renderMessage(message = this._message) {
+        const markup = `
+      <div class="message">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>`;
+        this._clear();
+        this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+}
+exports.default = View;
+
+},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"kbE4Z":[function(require,module,exports,__globalThis) {
 //
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class SearchView {
-    #parentEl = document.querySelector('.search');
+    _parentEl = document.querySelector('.search');
     getQuery() {
-        const query = this.#parentEl.querySelector('.search__field').value;
-        this.#clearInput();
+        const query = this._parentEl.querySelector('.search__field').value;
+        this._clearInput();
         return query;
     }
-    #clearInput() {
-        this.#parentEl.querySelector('.search__field').value = '';
+    _clearInput() {
+        this._parentEl.querySelector('.search__field').value = '';
     }
     addHandlerSearch(handler) {
-        this.#parentEl.addEventListener('submit', function(e) {
+        this._parentEl.addEventListener('submit', function(e) {
             e.preventDefault();
             handler();
         });
@@ -1144,6 +1206,38 @@ class SearchView {
 } // termina la clase searchView
 exports.default = new SearchView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"2iOri":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("./view.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class ResultsView extends (0, _viewJsDefault.default) {
+    _parentElement = document.querySelector('.results');
+    _errorMessage = 'No recipes found for your query. Please try again!';
+    _message = '';
+    _generateMarkup() {
+        return this._data.map(this._generateMarkupPreview).join('');
+    }
+    _generateMarkupPreview(result) {
+        return `
+      <li class="preview">
+        <a class="preview__link" href="#${result.id}">
+          <figure class="preview__fig">
+            <img src="${result.image}" alt="${result.title}" />
+          </figure>
+          <div class="preview__data">
+            <h4 class="preview__title">${result.title}</h4>
+            <p class="preview__publisher">${result.publisher}</p>
+            <div class="preview__user-generated"></div>
+          </div>
+        </a>
+      </li>`;
+    }
+}
+exports.default = new ResultsView();
+
+},{"./view.js":"2kjY2","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=forkify.4a59a05f.js.map

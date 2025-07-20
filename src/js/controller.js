@@ -48,7 +48,7 @@ const controlRecipes = async function() {
     // Renderizar la receta
     recipeView.render(model.state.recipe);
     // Mensaje de éxito al cargar la receta
-    recipeView.renderMessage('Receta cargada correctamente!'); 
+   // recipeView.renderMessage('Receta cargada correctamente!'); 
     // temporal Mostrar los datos de la receta en la consola para depuración
     console.log('Receta cargada:', model.state.recipe);
   } catch (err) {

@@ -667,10 +667,13 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez 
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el controlador principal de la aplicación Forkify, que se encarga de
-// manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
+//manejar la lógica de la aplicación, incluyendo la obtención de recetas y su renderizado.
+//Implementando el patrón de diseño MVC (Modelo-Vista-Controlador) para separar la lógica de negocio
+//de la lógica de presentación y facilitar el mantenimiento y la escalabilidad de la aplicación.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-19
 // Importando las dependencias necesarias
@@ -711,8 +714,9 @@ const controlRecipes = async function() {
         await _modelJs.loadRecipe(id);
         // Renderizar la receta
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
-        (0, _recipeViewJsDefault.default).renderMessage('Receta cargada correctamente!'); // Mensaje de éxito al cargar la receta
-        // Mostrar los datos de la receta en la consola para depuración
+        // Mensaje de éxito al cargar la receta
+        // recipeView.renderMessage('Receta cargada correctamente!'); 
+        // temporal Mostrar los datos de la receta en la consola para depuración
         console.log('Receta cargada:', _modelJs.state.recipe);
     } catch (err) {
         //Se lanza un error si ocurre un problema al cargar la receta
@@ -723,7 +727,8 @@ const controlRecipes = async function() {
         (0, _recipeViewJsDefault.default).renderError(err.message);
         throw err; // Lanzar el error para que sea manejado por el controlador
     }
-};
+} // termina función controlRecipes
+;
 // Definiendo el controlador de búsqueda de resultados
 // Este controlador se encarga de manejar la lógica de búsqueda de recetas, incluyendo la carga y
 // renderizado de los resultados de búsqueda. Utiliza la función loadSearchResults del modelo
@@ -748,7 +753,7 @@ const controlSearchResults = async function() {
     } catch (err) {
         console.error("\u274C Error en controlSearchResults:", err);
     }
-};
+}; // termina función controlSearchResults
 // Definiendo la funcion de controlador de paginación
 // Este controlador se encarga de manejar la lógica de paginación de los resultados de búsqueda
 // Utiliza la vista paginationView para renderizar los botones de paginación y
@@ -768,7 +773,7 @@ const controlPagination = function(goToPage) {
 // searchView y paginationView respectivamente.
 // La función init se llama al final para iniciar el controlador. 
 const init = function() {
-    (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes); // Añadir el manejador de eventos para renderizar la receta
+    (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
     (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
     console.log('Controlador inicializado');
@@ -776,12 +781,14 @@ const init = function() {
 init(); // Llamada al controlador inicial para iniciar la aplicación
 
 },{"./model.js":"3QBkH","./config.js":"2hPh4","./views/RecipeView.js":"dfIpa","url:../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P","./views/searchView.js":"kbE4Z","./views/resultView.js":"2iOri","./views/paginationView.js":"7NIiB"}],"3QBkH":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Implementando el modelo MVC para la aplicación Forkify
 // Descripción: Este es el modelo de la aplicación Forkify, que se encarga de
 // manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 // Repositorio: https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 // Importando la URL de la API y la función getJSON para realizar peticiones HTTP
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -790,12 +797,14 @@ parcelHelpers.export(exports, "state", ()=>state);
 // Esta función se encarga de cargar una receta específica desde la API
 // y actualizar el objeto state con los datos de la receta.
 // Si ocurre un error, se captura y se muestra en la consola.
-parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe) // termina la función loadRecipe
+;
 // Función asíncrona loadSearchResults que recibe query como parámetro
 // Esta función se encarga de cargar los resultados de búsqueda desde la API
 // y actualizar el objeto state con los resultados de búsqueda.
 // Si ocurre un error, se captura y se muestra en la consola.
-parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults) // termina la función loadSearchResults
+;
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 var _configJs = require("./config.js"); // Importando la URL de la API   
 var _helpersJs = require("./helpers.js");
@@ -885,11 +894,13 @@ const getSearchResultsPage = function(page = state.search.page) {
 };
 
 },{"./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./helpers.js":"7nL9P"}],"2hPh4":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Archivo de configuración para la aplicación Forkify
 // Contiene constantes y configuraciones globales
 // Repositorio:https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 // Este archivo contiene la URL de la API y el tiempo de espera para las peticiones HTTP
 // Se utiliza para configurar la conexión a la API y manejar errores de tiempo de espera.
 // Estas constantes son importadas en otros módulos para realizar peticiones a la API y manejar la lógica de la aplicación.
@@ -935,23 +946,27 @@ exports.export = function(dest, destName, get) {
 };
 
 },{}],"7nL9P":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
 // Archivo helpers.js con funciones auxiliares para la aplicación Forkify
 // Contiene funciones para manejar peticiones a la API y otras utilidades
 // Repositorio: https://github.com/bmjimenez/proyectojs2
 // Fecha: 2025-07-16
 // Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Funcion para obtener los datos de una receta y hacer una petición a la API
 // Esta función realiza una petición a la API y devuelve los datos de la receta
-parcelHelpers.export(exports, "getJSON", ()=>getJSON);
+parcelHelpers.export(exports, "getJSON", ()=>getJSON) // termina la función getJSON
+;
 // Debido a problemas con Fractional, tuve que implementar una clase para manejar fracciones
 // Clase Fraction_function para manejar fracciones
 // Esta clase permite crear fracciones a partir de números o cadenas de texto
 // Si se proporciona un denominador, se crea una fracción con el numerador y denominador especificados
 // Si no se proporciona un denominador, se calcula la fracción a partir of un número o cadena de texto
 // La clase incluye métodos para convertir la fracción a una cadena de texto y para obtener su valor numérico
-parcelHelpers.export(exports, "Fraction_function", ()=>Fraction_function);
+parcelHelpers.export(exports, "Fraction_function", ()=>Fraction_function) // termina la clase Fraction_function
+;
 var _configJs = require("./config.js"); // Importando la URL de la API desde config.js
 async function getJSON(id) {
     try {
@@ -966,7 +981,8 @@ async function getJSON(id) {
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data;
     } catch (err) {
-        throw err; // Lanzar el error para que sea manejado por el controlador;
+        // Lanzar el error para que sea manejado por el controlador;
+        throw err;
     }
 }
 // Funcion para manejar el timeout de las peticiones
@@ -1011,8 +1027,9 @@ class Fraction_function {
 }
 
 },{"./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"dfIpa":[function(require,module,exports,__globalThis) {
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar la lógica de negocio, incluyendo la obtención de recetas y su renderizado.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-16
@@ -1204,7 +1221,7 @@ class RecipeView extends (0, _viewJsDefault.default) {
             return qty;
         }
     }
-}
+} // termina la clase RecipeView
 // Exportar una instancia de RecipeView para ser utilizada en el controlador
 // Esto permite que el controlador pueda acceder a los métodos de la clase RecipeView
 // y renderizar recetas, spinner y errores en el DOM.
@@ -1218,14 +1235,15 @@ exports.default = new RecipeView();
 module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
 
 },{}],"2kjY2":[function(require,module,exports,__globalThis) {
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Este es el modelo de la aplicación Forkify, que se encarga de manejar
 // las vistas de la aplicación, incluyendo la búsqueda de recetas, la paginación
 // y la visualización de recetas.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-18
-//Importa iconos y la clase View
+//Importa iconos
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
@@ -1300,12 +1318,13 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
-}
+} // termina la clase View
 exports.default = View;
 
 },{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"kbE4Z":[function(require,module,exports,__globalThis) {
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez 
+//email: bmjimenez@hotmail.com
 //Descripción: Esta clase genera la Vista de los resultados de busqueda 
 //Repositorio:https://github.com/bmjimenez/proyectojs2
 //Fecha: 2025-07-17
@@ -1340,22 +1359,22 @@ class SearchView {
 exports.default = new SearchView();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"2iOri":[function(require,module,exports,__globalThis) {
-//Proyecto: Forkify
-//Autor: Jose Bernardo Moya Jimenez bmjimenez@hotmail.com
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+//Autor: Jose Bernardo Moya Jimenez
+//email: bmjimenez@hotmail.com
 //Descripción: Esta es la vista de resultados de búsqueda de recetas en la aplicación Forkify.
 // Esta vista se encarga de renderizar los resultados de búsqueda obtenidos del modelo,
 // mostrando una lista de recetas que coinciden con la consulta del usuario.
 // Utiliza la clase View para manejar la renderización de los resultados y la clase icons
 // para mostrar iconos SVG en la interfaz de usuario.
 //Repositorio:https://github.com/bmjimenez/proyectojs2
-//Fecha: 2025-07-06
-// Importando la clase View y los iconos SVG
+//Fecha: 2025-07-19
+// Importando la clase View 
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _viewJs = require("./view.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-var _iconsSvg = require("url:../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+//import icons from 'url:../../img/icons.svg';
 // ResultsView hereda de la clase View para reutilizar métodos comunes de renderización
 class ResultsView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.results');
@@ -1384,7 +1403,7 @@ class ResultsView extends (0, _viewJsDefault.default) {
         </a>
       </li>`;
     }
-}
+} // termina la clase ResultsView
 // Exportando una instancia de ResultsView para que pueda ser utilizada en otras partes de la aplicación
 // Esto permite que la vista de resultados sea reutilizable y se pueda acceder a sus métodos y
 // propiedades desde otras partes del código, como el controlador principal de la aplicación.
@@ -1397,15 +1416,29 @@ class ResultsView extends (0, _viewJsDefault.default) {
 // y mejora la legibilidad del código.
 exports.default = new ResultsView();
 
-},{"./view.js":"2kjY2","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7NIiB":[function(require,module,exports,__globalThis) {
+},{"./view.js":"2kjY2","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7NIiB":[function(require,module,exports,__globalThis) {
+//Proyecto: Forkify Curso Javascript 2 Tec Milenio
+// Implementando el modelo MVC para la aplicación Forkify
+// Descripción: Este es el modulo de la aplicación Forkify, que se encarga de hacer la paginación de los resultados de búsqueda
+// Repositorio: https://github.com/bmjimenez/proyectojs2
+// Fecha: 2025-07-16
+// Autor: Bernardo Moya Jimenez
+// email: bmjimenez@hotmail.com
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _viewJs = require("./view.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// Clase PaginationView que maneja la paginación de los resultados de búsqueda
+// Esta clase hereda de la clase View para reutilizar métodos comunes de renderización
+// y manejo de errores. Se encarga de renderizar los botones de paginación
+// y manejar los eventos de clic en los botones de paginación.
 class PaginationView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.pagination');
+    // Método para renderizar los botones de paginación
+    // Este método genera el HTML necesario para los botones de paginación
+    // y lo inserta en el contenedor de paginación.
     addHandlerClick(handler) {
         this._parentElement.addEventListener('click', function(e) {
             const btn = e.target.closest('.btn--inline');
@@ -1415,6 +1448,8 @@ class PaginationView extends (0, _viewJsDefault.default) {
             handler(goToPage);
         });
     }
+    // Método para generar el HTML de los botones de paginación
+    // Este método toma los datos de paginación y genera el HTML correspondiente
     _generateMarkup() {
         const curPage = this._data.page;
         const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
@@ -1455,7 +1490,10 @@ class PaginationView extends (0, _viewJsDefault.default) {
         // Solo una página
         return '';
     }
-}
+} // termina la clase PaginationView
+// Exportando una instancia de PaginationView para que pueda ser utilizada en otras partes de la aplicación
+// Esto permite que la vista de paginación sea reutilizable y se pueda acceder a sus métodos y
+// propiedades desde otras partes del código, como el controlador principal de la aplicación.
 exports.default = new PaginationView();
 
 },{"./view.js":"2kjY2","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
